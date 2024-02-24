@@ -1,0 +1,19 @@
+﻿@page "/add-new-subject";
+@inject ISubjectNameRepo Repo
+@inject NavigationManager NavManager
+
+<div class="row justify-content-center">
+    <div class="col-6">
+        <SubjectForm IsEditMode="false" OnValidSubjectNameSubmit="AddSub" />
+    </div>
+</div>
+
+@code {
+
+    private async Task AddSub(SubjectName subject)
+    {
+        await Repo.AddAsync(subject);
+        NavManager.NavigateTo("List");
+    }
+
+}

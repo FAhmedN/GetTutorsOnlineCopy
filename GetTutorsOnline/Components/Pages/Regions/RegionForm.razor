@@ -1,0 +1,78 @@
+﻿@inject IRegionRepo repo
+
+<h3>
+    @Title
+</h3>
+
+@if(Item is not null)
+{
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <EditForm Enhance=true method="post" Model=@Item FormName="RegionForm" OnValidSubmit="AddOrEditDataAsync" autocomplete="off">
+                <DataAnnotationsValidator/>
+                @if (IsEditMode)
+                {
+                    <input type="hidden" name="id" value="@Item.Id" />
+                }
+                <div class="mb-3">
+                    <label for="@Item.Name" class="form-label">
+                        Region Name
+                    </label>
+                    <InputText id="name" @bind-Value=Item.Name class="form-control shadow-none" />
+                </div>
+                <div class="mb-3">
+                    <label for="@Item.Description" class="form-label">
+                        Region Name
+                    </label>
+                    <InputTextArea id="description" @bind-Value=Item.Description class="form-control shadow-none" />
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary shadow-none">
+                        Submit
+                    </button>
+                    <a href="/regions/list" class="btn btn-secondary shadow-none ms-3">
+                        Back to List
+                    </a>
+                </div>
+                <ValidationSummary />
+            </EditForm>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    [Parameter]
+    public bool IsEditMode { get; set; } = false;
+
+    [Parameter]
+    public int Id{ get; set; }
+
+    [SupplyParameterFromForm]
+    public Region? Item{ get; set; }
+
+    public string Title => IsEditMode ? $"Edit Region {Id}" : "Add New Region";
+
+    [Parameter]
+    public EventCallback<Region> OnSubmitRequestValidated { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEditMode)
+        {
+            Item ??= await repo.GetByIdAsync(Id);
+        }
+        else
+        {
+            Item ??= new();
+        }
+    }
+
+    private async Task AddOrEditDataAsync()
+    {
+        await OnSubmitRequestValidated.InvokeAsync(Item);
+    }
+
+}

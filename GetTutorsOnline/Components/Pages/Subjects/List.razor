@@ -1,0 +1,72 @@
+﻿@page "/subjects/list";
+@inject ISubjectNameRepo Repo
+@attribute [StreamRendering]
+
+<PageTitle>
+    Subjects
+</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-8">
+        <a href="add-new-subject" calss="btn btn-primary shadow-none mb-3">
+            New Subject
+        </a>
+        @if(Subjects is null)
+        {
+            <div class="data-item">
+                Loading subject list, please wait....
+            </div>
+        }
+        else if(Subjects.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Subject Id</th>
+                        <th>Subject Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var subject in Subjects)
+                    {
+                        <tr>
+                            <td>@subject.Id</td>
+                            <td>@subject.SubName</td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a href="@($"/edit/{subject.Id}")" calss="btn btn-warning shadow-none">
+                                            Edit
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="@($"/edit/{subject.Id}")" calss="btn btn-warning shadow-none">
+                                            Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="data-item">
+                No Subjects Found....
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<SubjectName>? Subjects;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Subjects = await Repo.GetAllAsync();
+    }
+
+}

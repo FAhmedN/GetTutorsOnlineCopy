@@ -1,0 +1,78 @@
+﻿@page "/asmonth/list";
+
+@inject IAssessmentMonthRepo repo
+
+<PageTitle>
+    List of Regions
+</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-8">
+        <a href="/asmonth/add-new" class="btn btn-primary shadow-none">
+            Add New Month
+        </a>
+    </div>
+    @if (Items is null)
+    {
+        <div class="data-item">
+            Loading months List, please wait....
+        </div>
+    }
+    else if (Items is not null)
+    {
+        <h3>
+            Reporting Months (@Items.Count)
+        </h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Month Id</th>
+                    <th>Month Name</th>
+                    <th>Deadline</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Items)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Month</td>
+                        <td>@item.SubmitDeadline</td>
+                        <td>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="@($"/edit/{item.Id}")" calss="btn btn-warning shadow-none">
+                                        Edit
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="@($"/edit/{item.Id}")" calss="btn btn-warning shadow-none">
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="data-item">
+            No months found, Try adding one....
+        </div>
+    }
+</div>
+
+@code {
+    private List<AssessmentMonth>? Items { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Items = await repo.GetAllAsync();
+    }
+
+}

@@ -1,0 +1,22 @@
+﻿@page "/regions/add-new";
+@inject IRegionRepo repo
+@inject NavigationManager NavMan
+
+<div class="row justify-content-center">
+    <div class="row-6">
+        <RegionForm IsEditMode=false OnSubmitRequestValidated="AddNew">
+
+        </RegionForm>
+    </div>
+</div>
+
+@code {
+
+    private async Task AddNew(Region item)
+    {
+        await repo.AddAsync(item);
+        NavMan.NavigateTo("/regions/list");
+
+    }
+
+}

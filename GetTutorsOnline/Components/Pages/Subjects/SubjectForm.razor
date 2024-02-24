@@ -1,0 +1,77 @@
+﻿@inject ISubjectNameRepo Repo
+
+@if(Subject is not null)
+{
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <EditForm Enhance="true" method="post" FormName="SubjectForm" Model="Subject" OnValidSubmit="AddOrEditSubject" OnInvalidSubmit="InvSubmit" autocomplete="off">
+                <DataAnnotationsValidator/>
+                <h3>@Title</h3>
+                @if (IsEditMode)
+                {
+                    <input type="hidden" name="Subject.Id" value="@Subject.Id"/>
+                }
+                <div class="mb-3">
+                    <label for="subname" class="form-label">
+                        Subject Name
+                    </label>
+                    <InputText id="subname" @bind-Value="@Subject.SubName" class="form-control shadow-none" />
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary shadow-none">
+                        Submit
+                    </button>
+                    <a href="/subjects/list" class="btn btn-secondary shadow-none ms-3">
+                        Back to List
+                    </a>
+                </div>
+                <ValidationSummary />
+            </EditForm>
+        </div>
+    </div>
+}
+else
+{
+    <div>
+        The subject is null ghere
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsEditMode { get; set; } = false;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm(FormName = "SubjectForm")]
+    public SubjectName? Subject { get; set; }
+
+    public string Title => IsEditMode ? $"Edit Subject {Id}" : "Add New Subject";
+
+    [Parameter]
+    public EventCallback<SubjectName> OnValidSubjectNameSubmit { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEditMode)
+        {
+            Subject ??= await Repo.GetByIdAsync(Id);
+        }
+        else
+        {
+            Subject ??= new();
+        }
+    }
+
+    private async Task AddOrEditSubject()
+    {
+        await OnValidSubjectNameSubmit.InvokeAsync(Subject);
+    }
+
+    private async Task InvSubmit()
+    {
+        
+    }
+
+}

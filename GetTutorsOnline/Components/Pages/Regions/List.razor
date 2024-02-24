@@ -1,0 +1,77 @@
+﻿@page "/regions/list";
+@inject IRegionRepo repo
+
+<PageTitle>
+    List of Regions
+</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-8">
+        <a href="/regions/add-new" class="btn btn-primary shadow-none">
+            Add New Region
+        </a>
+    </div>
+    @if (Regions is null)
+    {
+        <div class="data-item">
+            Loading Regions List, please wait....
+        </div>
+    }
+    else if(Regions is not null)
+    {
+        <h3>
+            Regions(@Regions.Count)
+        </h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Region Id</th>
+                    <th>Region Name</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var region in Regions)
+                {
+                    <tr>
+                        <td>@region.Id</td>
+                        <td>@region.Name</td>
+                        <td>@region.Description</td>
+                        <td>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="@($"/edit/{region.Id}")" calss="btn btn-warning shadow-none">
+                                        Edit
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="@($"/edit/{region.Id}")" calss="btn btn-warning shadow-none">
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="data-item">
+            No regions found, Try adding one....
+        </div>
+    }
+</div>
+
+@code {
+    private List<Region>? Regions{ get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Regions = await repo.GetAllAsync();
+    }
+
+}
